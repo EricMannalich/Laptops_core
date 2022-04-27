@@ -1,0 +1,67 @@
+version: '3.8'
+
+x-database-variables: &database-variables
+    POSTGRES_BD: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+
+x-app-variables: &app-variables
+    <<: *database-variables
+    POSTGRES_HOST: postgres-media
+    SECRET_KEY: "xuT<llqg<k4xUGHd"
+    ALLOWED_HOSTS: "*"
+    CSRF_TRUSTED_ORIGINS: "https://127.0.0.1:443"
+    DEBUG: 0
+    DEFAULT_PERMISSION_ENV: "rest_framework.permissions.IsAuthenticated"
+    CSRF_COOKIE_SECURE: 1
+    SESSION_COOKIE_SECURE: 1
+    SECURE_HSTS_SECONDS: 31536000
+    SECURE_SSL_REDIRECT: 1
+    CORS_ORIGIN_ALLOW_ALL: 0
+    CORS_ALLOWED_ORIGINS: "https://127.0.0.1:443"
+    CORS_ORIGIN_WHITELIST: "https://127.0.0.1:443"
+    CORS_ALLOWED_ORIGINS_REGEXE: ""
+
+services:
+    postgres:
+        image: postgres:13.3
+        container_name: postgres-media
+        environment: *database-variables
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        ports: 
+            - "5433:5432"
+
+    django: 
+        image: media:0.2
+        container_name: django-media
+        environment: *app-variables
+        volumes: 
+            - static:/code/static
+            - .:/code
+            - ssl:/etc/ssl
+        ports: 
+            - "8443:8443"
+        command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn -c config/gunicorn/conf.py --chdir core core.wsgi:application"
+        depends_on:
+            - postgres
+
+    nginx:
+        image: nginx:1.20.0
+        container_name: nginx-media
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ssl:/etc/ssl
+            - ./config/nginx/conf.d:/etc/nginx/conf.d
+            - static:/code/static
+        depends_on:
+            - django
+
+
+volumes:
+    .:
+    postgres_data:
+    ssl:
+    static:

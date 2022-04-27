@@ -1,0 +1,4 @@
+﻿laptop__id,laptop__gpu__rendimiento_fp32_TFlops,laptop__gpu__cant_vram_GB,laptop__gpu__cache_total,laptop__cpu__cinebench_R23_single,laptop__cpu__cinebench_R23_multi,laptop__cpu__cache_total,laptop__disco_duro__generacion,fps
+23,8.580,4,2.0,1253,11135,12.0,3,50
+11,10.420,6,3.0,1578,6663,17.0,4,70
+3,12.610,6,3.0,1507,12217,34.0,4,90

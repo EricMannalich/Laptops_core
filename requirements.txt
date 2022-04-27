@@ -1,0 +1,13 @@
+bs4
+django-cors-headers
+django-queryset-csv
+django-simple-history
+djangorestframework-simplejwt
+matplotlib
+numpy
+pandas
+Pillow
+psycopg2
+requests
+sklearn
+statsmodels
